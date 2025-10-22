@@ -6,7 +6,7 @@
             return {
                 x: 0,
                 y: 0,
-                operators: ["+", "-", "*", "/", ""],
+                operators: ["+", "-", "*", "/", "%"],
                 selectedOp: "+",
             }
         },
