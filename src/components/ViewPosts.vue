@@ -3,6 +3,7 @@
 </script>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -36,11 +37,28 @@ export default {
     },
     methods: {
         editPost(id) {
-            
+            this.showEditPost = true;
+            this.editPostId = id;
+
         },
         updatePost(event) {
-            
-        }
+            axios.post(`${this.baseUrl}/updatePost?id=${this.editPostId}`,{
+                
+                    
+                    'entry': this.entry,
+                    'mood': this.mood, 
+                    
+                
+            })
+            .then(response => {
+                // this gets the data, which is an array, and pass the data to Vue instance's posts property
+                this.posts = response.data
+            })
+            .catch(error => {
+                this.posts = [{ entry: 'There was an error: ' + error.message }]
+            })
+        },
+        
     }
 }
 </script>
@@ -57,11 +75,11 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="post in posts">
+                <tr v-for="post in posts" :key="post.id">
                     <td>{{ post.id }}</td>
                     <td>{{ post.entry }}</td>
                     <td>{{ post.mood }}</td>
-                    <td><button>Edit</button></td>
+                    <td><button @click = "editPost(post.id)">Edit</button></td>
                 </tr>
             </tbody>
 
@@ -70,7 +88,7 @@ export default {
         <div id="editPost" v-if="showEditPost">
             <h3>Edit Post</h3>
             <div id="postContent" class="mx-3">
-                <form>
+                <form @submit.prevent="updatePost">
                     <div class="mb-3">
                         <label for="entry" class="form-label">Entry</label>
                         <textarea id="entry" class="form-control" v-model="entry" required></textarea>
